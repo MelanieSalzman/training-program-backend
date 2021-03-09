@@ -23,17 +23,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     }
-  },
-    {
-      instanceMethods: {
-        hashPassword = (password) => {
-          return bcrypt.hash(password, bcrypt.genSaltSync(10));
-        },
-        validatePassword = (password) => {
-          return bcrypt.compare(password, this.password);
-        }
-      }
-    })
+  })
+
+  User.prototype.validPassword = function (password) {
+    return bcrypt.compareSync(password, this.password)
+  }
+
+  User.prototype.hashPassword = function (password) {
+    return bcrypt.hash(password, bcrypt.genSaltSync(10))
+  }
 
   return User
 }

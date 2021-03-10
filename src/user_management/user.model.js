@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+const saltRounds = 10;
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('user', {
@@ -25,13 +26,14 @@ export default (sequelize, DataTypes) => {
     }
   })
 
-  User.prototype.validPassword = function (password) {
-    return bcrypt.compareSync(password, this.password)
+  User.prototype.validatePassword = async(password) => {
+    return await bcrypt.compare(password, this.password)
   }
 
-  User.prototype.hashPassword = function (password) {
-    return bcrypt.hash(password, bcrypt.genSaltSync(10))
-  }
+  User.beforeCreate(async (user) => {
+    const hashedPassword = await bcrypt.hash(password, bcrypt.genSalt(salt))
+    user.password = hashedPassword;
+  })
 
   return User
 }

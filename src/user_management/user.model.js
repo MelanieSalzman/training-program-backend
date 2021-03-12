@@ -26,12 +26,13 @@ export default (sequelize, DataTypes) => {
     }
   })
 
-  User.prototype.validatePassword = async(password) => {
-    return await bcrypt.compare(password, this.password)
+  User.prototype.validatePassword = function(password) {
+    return bcrypt.compare(password, this.password)
   }
 
   User.beforeCreate(async (user) => {
-    const hashedPassword = await bcrypt.hash(password, bcrypt.genSalt(salt))
+    const salt = await bcrypt.genSalt(saltRounds)
+    const hashedPassword = await bcrypt.hash(password,salt)
     user.password = hashedPassword;
   })
 

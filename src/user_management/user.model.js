@@ -30,10 +30,10 @@ export default (sequelize, DataTypes) => {
     return bcrypt.compare(password, this.password)
   }
 
-  User.beforeCreate(async (user) => {
+  User.beforeCreate(async function(password) {
     const salt = await bcrypt.genSalt(saltRounds)
-    const hashedPassword = await bcrypt.hash(password,salt)
-    user.password = hashedPassword;
+    const hashedPassword = await bcrypt.hash(password.toString(),salt)
+    this.password = hashedPassword
   })
 
   return User
